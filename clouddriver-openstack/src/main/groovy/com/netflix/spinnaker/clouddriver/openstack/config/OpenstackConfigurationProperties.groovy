@@ -25,7 +25,6 @@ class OpenstackConfigurationProperties {
     String name
     String environment
     String accountType
-    String lbaasVersion
     String master
     String username
     String password

@@ -18,7 +18,6 @@ package com.netflix.spinnaker.clouddriver.openstack.security
 
 import com.netflix.spinnaker.cats.module.CatsModule
 import com.netflix.spinnaker.cats.provider.ProviderSynchronizerTypeWrapper
-import com.netflix.spinnaker.clouddriver.openstack.client.OpenstackProviderFactory
 import com.netflix.spinnaker.clouddriver.openstack.config.OpenstackConfigurationProperties
 import com.netflix.spinnaker.clouddriver.security.AccountCredentialsRepository
 import com.netflix.spinnaker.clouddriver.security.CredentialsInitializerSynchronizable
@@ -71,7 +70,6 @@ class OpenstackCredentialsInitializer implements CredentialsInitializerSynchroni
         def openstackAccount = new OpenstackNamedAccountCredentials(managedAccount.name,
                                                                     managedAccount.environment ?: managedAccount.name,
                                                                     managedAccount.accountType ?: managedAccount.name,
-                                                                    managedAccount.lbaasVersion ?: LbaasVersion.V1.value(),
                                                                     managedAccount.master,
                                                                     managedAccount.username,
                                                                     managedAccount.password,

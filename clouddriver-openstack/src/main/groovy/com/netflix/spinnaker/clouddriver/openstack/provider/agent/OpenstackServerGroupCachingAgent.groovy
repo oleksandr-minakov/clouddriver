@@ -33,11 +33,9 @@ import com.netflix.spinnaker.clouddriver.openstack.security.OpenstackNamedAccoun
 import groovy.util.logging.Slf4j
 import org.openstack4j.model.compute.Server
 import org.openstack4j.model.heat.Stack
-import org.openstack4j.model.network.ext.LbPool
 
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
-import java.time.format.DateTimeParseException
 
 import static com.netflix.spinnaker.cats.agent.AgentDataType.Authority.AUTHORITATIVE
 import static com.netflix.spinnaker.cats.agent.AgentDataType.Authority.INFORMATIVE
@@ -115,12 +113,9 @@ class OpenstackServerGroupCachingAgent extends AbstractOpenstackCachingAgent {
         String loadBalancerKey = null
         Stack detail = clientProvider.getStack(region, stack.name)
         if (detail && detail.parameters) {
-          LbPool pool = clientProvider.getLoadBalancerPool(region, detail.parameters['pool_id'])
-          if (pool) {
-            loadBalancerKey = Keys.getLoadBalancerKey(pool.name, pool.id, accountName, region)
-            cacheResultBuilder.namespace(LOAD_BALANCERS.ns).keep(loadBalancerKey).with {
-              relationships[SERVER_GROUPS.ns].add(serverGroupKey)
-            }
+          loadBalancerKey = Keys.getLoadBalancerKey(detail.parameters['pool_id'], accountName, region)
+          cacheResultBuilder.namespace(LOAD_BALANCERS.ns).keep(loadBalancerKey).with {
+            relationships[SERVER_GROUPS.ns].add(serverGroupKey)
           }
         }
 
@@ -165,22 +160,11 @@ class OpenstackServerGroupCachingAgent extends AbstractOpenstackCachingAgent {
     Map<String, Object> launchConfig = buildLaunchConfig(stack.parameters)
     Map<String, Object> openstackImage = buildImage(providerCache, (String) launchConfig?.image)
 
-    //TODO this check will change once we have a config that indicates the openstack version, e.g. kilo, liberty, mitaka
-    //kilo stack create times have a 'Z' on the end. It was removed in liberty and mitaka.
-    ZonedDateTime zonedDateTime
-    try {
-      //kilo
-      zonedDateTime = ZonedDateTime.parse(stack.creationTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME)
-    } catch(DateTimeParseException e) {
-      //liberty+
-      zonedDateTime = ZonedDateTime.parse(stack.creationTime, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
-    }
-
     OpenstackServerGroup.builder()
       .account(accountName)
       .region(region)
       .name(stack.name)
-      .createdTime(stack.creationTime ? zonedDateTime.toInstant().toEpochMilli() : ZonedDateTime.now().toInstant().toEpochMilli())
+      .createdTime(stack.creationTime ? ZonedDateTime.parse(stack.creationTime, DateTimeFormatter.ISO_OFFSET_DATE_TIME).toInstant().toEpochMilli() : ZonedDateTime.now().toInstant().toEpochMilli())
       .scalingConfig(buildScalingConfig(stack))
       .launchConfig(launchConfig)
       .loadBalancers(loadbalancerIds)

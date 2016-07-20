@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.netflix.spinnaker.clouddriver.openstack.model
+package com.netflix.spinnaker.clouddriver.openstack.domain
 
 import com.netflix.spinnaker.clouddriver.model.Network
 import com.netflix.spinnaker.clouddriver.openstack.OpenstackCloudProvider

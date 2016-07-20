@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-package com.netflix.spinnaker.clouddriver.openstack.controllers
+package com.netflix.spinnaker.clouddriver.openstack.controller
 
 import com.google.common.collect.Sets
+import com.netflix.spinnaker.clouddriver.openstack.controllers.OpenstackImageLookupController
 import com.netflix.spinnaker.clouddriver.openstack.model.Image
 import com.netflix.spinnaker.clouddriver.openstack.provider.ImageProvider
 import redis.clients.jedis.exceptions.JedisException
