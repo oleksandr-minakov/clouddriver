@@ -21,6 +21,7 @@ import com.netflix.spinnaker.clouddriver.docker.registry.api.v2.exception.Docker
 import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import retrofit.RestAdapter
+import retrofit.RetrofitError
 import retrofit.client.Header
 import retrofit.http.GET
 import retrofit.http.Headers
@@ -142,6 +143,7 @@ class DockerBearerTokenService {
 
     if (tokenService == null) {
       def builder = new RestAdapter.Builder().setEndpoint(realm).setLogLevel(RestAdapter.LogLevel.NONE).build()
+      log.warn("#DockerBearerTokenService #getTokenService #beforeBuild")
       tokenService = builder.create(TokenService.class)
       realmToService[realm] = tokenService
     }
@@ -182,14 +184,53 @@ class DockerBearerTokenService {
     def tokenService = getTokenService(authenticateDetails.realm)
     def token
     if (basicAuth) {
-      log.warn("#DockerBearerTokenService #basicAuth #before DETAILS -> ${authenticateDetails.toString()}")
-      token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, basicAuthHeader, dockerApplicationName)
+      log.warn("#DockerBearerTokenService #basicAuth #before DETAILS -> ${authenticateDetails.path}")
+      log.warn("#DockerBearerTokenService #basicAuth #before DETAILS -> ${authenticateDetails.realm}")
+      log.warn("#DockerBearerTokenService #basicAuth #before DETAILS -> ${authenticateDetails.scope}")
+      log.warn("#DockerBearerTokenService #basicAuth #before DETAILS -> ${authenticateDetails.service}")
+      log.warn("#DockerBearerTokenService #basicAuth #before basicAuth -> ${basicAuth}")
+      log.warn("#DockerBearerTokenService #basicAuth #before basicAuthHeader -> ${basicAuthHeader}")
+      log.warn("#DockerBearerTokenService #basicAuth #before dockerApplicationName -> ${dockerApplicationName}")
+
+      try {
+        token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, basicAuthHeader, dockerApplicationName)
+      } catch (RetrofitError err) {
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.url}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.message}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.status}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.url}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.headers}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.reason}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.body}")
+        throw err
+      }
+
       log.warn("#DockerBearerTokenService #basicAuth #after TOKEN -> ${token}")
     }
     else {
-      log.warn("#DockerBearerTokenService #token #before DETAILS -> ${authenticateDetails.toString()}")
-      token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, dockerApplicationName)
-      log.warn("#DockerBearerTokenService #token #after TOKEN -> ${token}")
+      log.warn("#DockerBearerTokenService #tokenAuth #before DETAILS -> ${authenticateDetails.path}")
+      log.warn("#DockerBearerTokenService #tokenAuth #before DETAILS -> ${authenticateDetails.realm}")
+      log.warn("#DockerBearerTokenService #tokenAuth #before DETAILS -> ${authenticateDetails.scope}")
+      log.warn("#DockerBearerTokenService #tokenAuth #before DETAILS -> ${authenticateDetails.service}")
+      log.warn("#DockerBearerTokenService #tokenAuth #before dockerApplicationName -> ${dockerApplicationName}")
+
+      try {
+        token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, dockerApplicationName)
+
+      } catch (RetrofitError err) {
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.url}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.message}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.status}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.url}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.headers}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.reason}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.body}")
+        throw err
+      }
+
+      log.warn("#DockerBearerTokenService #tokenAuth #after TOKEN -> ${token}")
     }
 
     cachedTokens[repository] = token
