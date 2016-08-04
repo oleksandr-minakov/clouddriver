@@ -202,7 +202,8 @@ class DockerBearerTokenService {
         log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.url}")
         log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.headers}")
         log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.reason}")
-        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.body}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.body.toString()}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.body.properties}")
         throw err
       }
 
@@ -226,7 +227,8 @@ class DockerBearerTokenService {
         log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.url}")
         log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.headers}")
         log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.reason}")
-        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.body}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.body.toString()}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.body.properties}")
         throw err
       }
 
