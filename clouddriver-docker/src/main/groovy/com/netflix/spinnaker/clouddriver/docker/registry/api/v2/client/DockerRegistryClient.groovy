@@ -109,6 +109,8 @@ class DockerRegistryClient {
       registryService.getTags(repository, token, dockerApplicationName)
     }, repository)
 
+    log.warn("#DockerRegistryTags #getTags -> ${response.status}  ${response.headers}  ${response.body} ")
+
     (DockerRegistryTags) converter.fromBody(response.body, DockerRegistryTags)
   }
 
