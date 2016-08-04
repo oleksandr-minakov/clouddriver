@@ -18,6 +18,7 @@ package com.netflix.spinnaker.clouddriver.docker.registry.api.v2.auth
 
 import com.netflix.spinnaker.clouddriver.docker.registry.DockerRegistryConfiguration
 import com.netflix.spinnaker.clouddriver.docker.registry.api.v2.exception.DockerRegistryAuthenticationException
+import groovy.util.logging.Slf4j
 import org.springframework.beans.factory.annotation.Autowired
 import retrofit.RestAdapter
 import retrofit.client.Header
@@ -26,6 +27,7 @@ import retrofit.http.Headers
 import retrofit.http.Path
 import retrofit.http.Query
 
+@Slf4j
 class DockerBearerTokenService {
   private Map<String, TokenService> realmToService
   private Map<String, DockerBearerToken> cachedTokens
@@ -174,9 +176,11 @@ class DockerBearerTokenService {
     def token
     if (basicAuth) {
       token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, basicAuthHeader, dockerApplicationName)
+      log.warn("#DockerBearerTokenService #basicAuth DETAILS -> ${authenticateDetails.toString()}")
     }
     else {
       token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, dockerApplicationName)
+      log.warn("#DockerBearerTokenService #token DETAILS -> ${authenticateDetails.toString()}")
     }
 
     cachedTokens[repository] = token
