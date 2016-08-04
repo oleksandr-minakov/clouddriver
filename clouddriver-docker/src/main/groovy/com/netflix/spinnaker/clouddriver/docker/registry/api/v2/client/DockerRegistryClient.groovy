@@ -64,6 +64,9 @@ class DockerRegistryClient {
       .create(DockerRegistryService)
     this.converter = new GsonConverter(new GsonBuilder().create())
     this.address = address
+    log.warn("#DockerRegistryClient ADDRESS -> ${address}")
+    log.warn("#DockerRegistryClient USERNAME -> ${username}")
+    log.warn("#DockerRegistryClient PASSWORD -> ${password}")
   }
 
   interface DockerRegistryService {

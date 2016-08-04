@@ -17,7 +17,9 @@
 package com.netflix.spinnaker.clouddriver.docker.registry.security
 
 import com.netflix.spinnaker.clouddriver.docker.registry.api.v2.client.DockerRegistryClient
+import groovy.util.logging.Slf4j
 
+@Slf4j
 class DockerRegistryCredentials {
   private final DockerRegistryClient client
   private List<String> repositories
@@ -36,6 +38,7 @@ class DockerRegistryCredentials {
       this.reloadRepositories = false
       this.repositories = repositories
     }
+    log.warn("#DockerRegistryCredentials REPOSITORIES ${repositories}")
   }
 
   DockerRegistryClient getClient() {

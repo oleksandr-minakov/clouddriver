@@ -50,6 +50,10 @@ class DockerRegistryImageCachingAgent implements CachingAgent, AccountAware {
     this.credentials = credentials
     this.index = index
     this.threadCount = threadCount
+    log.warn("#DockerRegistryImageCachingAgent ACCOUNT_NAME ${accountName}")
+    log.warn("#DockerRegistryImageCachingAgent INDEX ${index}")
+    log.warn("#DockerRegistryImageCachingAgent TREADCOUNT ${threadCount}")
+    log.warn("#DockerRegistryImageCachingAgent CLOUD_PROVIDER ${dockerRegistryCloudProvider.displayName}")
   }
 
   @Override
