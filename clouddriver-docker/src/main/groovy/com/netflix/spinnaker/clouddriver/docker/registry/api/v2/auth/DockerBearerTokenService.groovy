@@ -203,7 +203,7 @@ class DockerBearerTokenService {
         log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.headers}")
         log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.reason}")
         log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.body.toString()}")
-        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.body.properties}")
+        log.error("#DockerBearerTokenService #basicAuth #RetrofitError -> ${err.response.body.in().text}")
         throw err
       }
 
@@ -228,7 +228,7 @@ class DockerBearerTokenService {
         log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.headers}")
         log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.reason}")
         log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.body.toString()}")
-        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.body.properties}")
+        log.error("#DockerBearerTokenService #tokenAuth #RetrofitError -> ${err.response.body.in().text}")
         throw err
       }
 
