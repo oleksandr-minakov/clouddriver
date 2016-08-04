@@ -219,25 +219,38 @@ class DockerRegistryClient {
    * The tokenService also caches tokens for us, so it will attempt to use an old token before retrying.
    */
   public Response request(Closure<Response> withoutToken, Closure<Response> withToken, String target) {
+    log.warn("#DockerRegistryClient #request")
     DockerBearerToken dockerToken = tokenService.getToken(target)
+    log.warn("#DockerRegistryClient #request TOKEN -> ${dockerToken}")
     String token
     if (dockerToken) {
       token = "Bearer ${dockerToken.bearer_token ?: dockerToken.token}"
     }
+    log.warn("#DockerRegistryClient #request BEARER TOKEN -> ${token}")
 
     Response response
     try {
       if (token) {
         response = withToken(token)
+        log.warn("#DockerRegistryClient #request RESPONSE -> ${response.status} ${response.headers} ${response.body}")
       } else {
         response = withoutToken()
+        log.warn("#DockerRegistryClient #request RESPONSE -> ${response.status} ${response.headers} ${response.body}")
       }
     } catch (RetrofitError error) {
       if (error.response?.status == 401) {
-        dockerToken = tokenService.getToken(target, error.response.headers)
+        log.warn("#DockerRegistryClient #request RESPONSE -> 401 CAUGHT")
+        try {
+          dockerToken = tokenService.getToken(target, error.response.headers)
+        } catch (Exception ex) {
+          log.warn("#DockerRegistryClient #request #getToken EXCEPTION -> ${ex.message}")
+        }
+        log.warn("#DockerRegistryClient #request dockerToken -> ${dockerToken}")
+
         token = "Bearer ${dockerToken.bearer_token ?: dockerToken.token}"
         response = withToken(token)
       } else {
+        log.warn("#DockerRegistryClient #request ERROR -> ${error}")
         throw error
       }
     }
