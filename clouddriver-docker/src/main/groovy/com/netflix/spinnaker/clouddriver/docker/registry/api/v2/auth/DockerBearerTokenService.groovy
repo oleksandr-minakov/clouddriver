@@ -137,6 +137,7 @@ class DockerBearerTokenService {
   }
 
   private getTokenService(String realm) {
+    log.warn("#DockerBearerTokenService #getTokenService REALM -> ${realm}")
     def tokenService = realmToService.get(realm)
 
     if (tokenService == null) {
@@ -153,10 +154,14 @@ class DockerBearerTokenService {
   }
 
   public DockerBearerToken getToken(String repository, List<Header> headers) {
+    log.warn("#DockerBearerToken #getToken")
+    log.warn("#DockerBearerToken #getToken REPOSITORY -> $repository")
+    log.warn("#DockerBearerToken #getToken HEADERS -> ${headers}")
     String authenticate = null
 
     headers.forEach { header ->
       if (header.name.equalsIgnoreCase("www-authenticate")) {
+        log.warn("#DockerBearerToken #getToken HEADER -> ${header.toString()} = ${header.value}")
         authenticate = header.value
       }
     }
@@ -167,20 +172,24 @@ class DockerBearerTokenService {
 
     def authenticateDetails
     try {
+      log.warn("#DockerBearerToken #getToken #parseBearerAuthenticateHeader")
       authenticateDetails = parseBearerAuthenticateHeader(authenticate)
     } catch (Exception e) {
       throw new DockerRegistryAuthenticationException("Failed to parse www-authenticate header: ${e.message}")
     }
 
+    log.warn("#DockerBearerToken #getToken #getTokenService")
     def tokenService = getTokenService(authenticateDetails.realm)
     def token
     if (basicAuth) {
+      log.warn("#DockerBearerTokenService #basicAuth #before DETAILS -> ${authenticateDetails.toString()}")
       token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, basicAuthHeader, dockerApplicationName)
-      log.warn("#DockerBearerTokenService #basicAuth DETAILS -> ${authenticateDetails.toString()}")
+      log.warn("#DockerBearerTokenService #basicAuth #after TOKEN -> ${token}")
     }
     else {
+      log.warn("#DockerBearerTokenService #token #before DETAILS -> ${authenticateDetails.toString()}")
       token = tokenService.getToken(authenticateDetails.path, authenticateDetails.service, authenticateDetails.scope, dockerApplicationName)
-      log.warn("#DockerBearerTokenService #token DETAILS -> ${authenticateDetails.toString()}")
+      log.warn("#DockerBearerTokenService #token #after TOKEN -> ${token}")
     }
 
     cachedTokens[repository] = token

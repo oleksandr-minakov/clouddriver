@@ -220,6 +220,7 @@ class DockerRegistryClient {
    */
   public Response request(Closure<Response> withoutToken, Closure<Response> withToken, String target) {
     log.warn("#DockerRegistryClient #request")
+    log.warn("#DockerRegistryClient #request TARGET -> ${target}")
     DockerBearerToken dockerToken = tokenService.getToken(target)
     log.warn("#DockerRegistryClient #request TOKEN -> ${dockerToken}")
     String token
@@ -244,8 +245,11 @@ class DockerRegistryClient {
           dockerToken = tokenService.getToken(target, error.response.headers)
         } catch (Exception ex) {
           log.warn("#DockerRegistryClient #request #getToken EXCEPTION -> ${ex.message}")
+          throw ex
         }
-        log.warn("#DockerRegistryClient #request dockerToken -> ${dockerToken}")
+        if (dockerToken) {
+          log.warn("#DockerRegistryClient #request dockerToken -> ${dockerToken}")
+        }
 
         token = "Bearer ${dockerToken.bearer_token ?: dockerToken.token}"
         response = withToken(token)
